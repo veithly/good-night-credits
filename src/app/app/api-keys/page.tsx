@@ -95,7 +95,7 @@ export default function ApiKeysPage() {
 
   const sampleToken = showToken?.token ?? "gnc_live_<paste-your-key>";
   const sampleModel = models[0]?.id
-    ?? "step-3.6";
+    ?? "configured-model";
 
   const curlSample = `curl ${origin}/api/v1/chat/completions \\
   -H "Authorization: Bearer ${sampleToken}" \\

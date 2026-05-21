@@ -37,8 +37,18 @@ export interface DiscoveredModel {
   family: "openai" | "anthropic" | "google";
 }
 
-export const PUBLIC_MODEL_ID = process.env.MODEL_GATEWAY_MODEL || "step-3.6";
-const PUBLIC_MODEL_IDS = new Set([PUBLIC_MODEL_ID.toLowerCase()]);
+function parsePublicModelIds(): string[] {
+  const raw = process.env.MODEL_GATEWAY_MODELS || process.env.MODEL_GATEWAY_MODEL || "step-3.6";
+  const ids = raw
+    .split(/[\s,]+/)
+    .map((id) => id.trim())
+    .filter(Boolean);
+  return ids.length > 0 ? ids : ["step-3.6"];
+}
+
+export const PUBLIC_MODEL_ID = parsePublicModelIds()[0] ?? "step-3.6";
+const PUBLIC_MODEL_ID_LIST = parsePublicModelIds();
+const PUBLIC_MODEL_IDS = new Set(PUBLIC_MODEL_ID_LIST.map((id) => id.toLowerCase()));
 const PRIVATE_PROVIDER_ID = "gateway";
 
 export function listProviders(): ProviderConfig[] {
@@ -51,7 +61,7 @@ export function listProviders(): ProviderConfig[] {
       name: "Private Model Gateway",
       baseURL,
       apiKey: key,
-      allowlist: [PUBLIC_MODEL_ID],
+      allowlist: PUBLIC_MODEL_ID_LIST,
       badges: ["wallet"],
     } satisfies ProviderConfig,
   ];
@@ -177,7 +187,7 @@ export async function discoverModels(provider: ProviderConfig, opts: { fresh?: b
     void e;
     // Fall back to the configured public model so the UI and API contract stay
     // stable even if catalog discovery is temporarily unavailable.
-    const models = [PUBLIC_MODEL_ID].map((id) => {
+    const models = PUBLIC_MODEL_ID_LIST.map((id) => {
       const tier = classify(id);
       const price = priceFor(tier);
       return {
@@ -218,19 +228,21 @@ function providerRank(id: string): number {
 export async function discoverAll(): Promise<DiscoveredModel[]> {
   const providers = listProviders();
   if (providers.length === 0) {
-    const tier = classify(PUBLIC_MODEL_ID);
-    const price = priceFor(tier);
-    return [{
-      id: `${PRIVATE_PROVIDER_ID}:${PUBLIC_MODEL_ID}`,
-      publicId: PUBLIC_MODEL_ID,
-      providerId: PRIVATE_PROVIDER_ID,
-      modelName: PUBLIC_MODEL_ID,
-      tier,
-      family: familyFor(PUBLIC_MODEL_ID),
-      inputCost: price.inputCost,
-      outputCost: price.outputCost,
-      label: PUBLIC_MODEL_ID,
-    }];
+    return PUBLIC_MODEL_ID_LIST.map((id) => {
+      const tier = classify(id);
+      const price = priceFor(tier);
+      return {
+        id: `${PRIVATE_PROVIDER_ID}:${id}`,
+        publicId: id,
+        providerId: PRIVATE_PROVIDER_ID,
+        modelName: id,
+        tier,
+        family: familyFor(id),
+        inputCost: price.inputCost,
+        outputCost: price.outputCost,
+        label: id,
+      };
+    });
   }
   const results = await Promise.all(providers.map((p) => discoverModels(p)));
   // Dedupe by publicId so users only ever see one entry per model name. The
@@ -294,7 +306,23 @@ export interface ChatResponse {
 
 export async function chatCompletion(model: DiscoveredModel, req: Omit<ChatRequest, "modelId">): Promise<ChatResponse> {
   const provider = getProvider(model.providerId);
-  if (!provider) throw new Error("provider_not_configured");
+  if (!provider) {
+    if (process.env.MODEL_GATEWAY_DEMO_MODE === "1" || process.env.NEXT_PUBLIC_DEMO_MODE === "1") {
+      const text = "Sleep restores; stimulants borrow from tomorrow.";
+      const promptTokens = Math.ceil(JSON.stringify(req.messages).length / 4);
+      const completionTokens = Math.ceil(text.length / 4);
+      return {
+        text,
+        modelName: model.modelName,
+        providerId: model.providerId,
+        promptTokens,
+        completionTokens,
+        totalTokens: promptTokens + completionTokens,
+        finishReason: "stop",
+      };
+    }
+    throw new Error("provider_not_configured");
+  }
   const gatewayMessages: ChatMessage[] = [
     {
       role: "system",
@@ -356,11 +384,12 @@ export function estimateCreditCost(model: DiscoveredModel, promptTokens: number,
 
 export function providerSummary(): { id: string; name: string; baseURL: string; configured: boolean; keyHash: string; badges?: string[] }[] {
   const key = process.env.MODEL_GATEWAY_API_KEY ?? "";
+  const baseURL = process.env.MODEL_GATEWAY_BASE_URL_SECRET || process.env.MODEL_GATEWAY_BASE_URL;
   return [{
     id: PRIVATE_PROVIDER_ID,
     name: "Private Model Gateway",
     baseURL: "",
-    configured: Boolean(key && process.env.MODEL_GATEWAY_BASE_URL),
+    configured: Boolean(key && baseURL),
     keyHash: key ? shortHash(key) : "",
     badges: ["wallet"],
   }];

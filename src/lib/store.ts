@@ -171,6 +171,7 @@ function persistFile() {
 }
 
 async function getCloudflareStoreContext(): Promise<CloudflareStoreContext | null> {
+  if (process.env.GNC_STORE_BACKEND === "file") return null;
   try {
     const mod = await import("@opennextjs/cloudflare");
     const getCloudflareContext = (mod as {
