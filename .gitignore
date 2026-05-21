@@ -1,0 +1,77 @@
+# ─── Dependencies ───
+node_modules/
+.pnp/
+.pnp.js
+.pnpm-debug.log*
+
+# ─── Next.js ───
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts.bak
+
+# ─── Local state ───
+.env
+.dev.vars
+.dev.vars.*
+.env.local
+.env*.local
+.local/
+.cache/
+.wrangler/
+.open-next/
+
+# ─── App data (file-backed store, runtime artefacts) ───
+data/runtime/
+data/seed.lock
+storage.json
+*.sqlite
+*.sqlite-journal
+
+# ─── Editor / OS ───
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ─── Logs ───
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+logs/
+
+# ─── Test artefacts ───
+playwright-report/
+test-results/
+coverage/
+
+# ─── HackathonHunter working files ───
+goal-state/
+task_plan.md
+notes.md
+bounty_brief.md
+SUBMISSION.md
+PRD.md
+.omx/
+
+# ─── Private demo / submission assets ───
+pitch/
+assets/music/
+scripts/build-captions.mjs
+scripts/build-hyperframes-polish.mjs
+scripts/ffmpeg-paths.mjs
+scripts/mix-final.mjs
+scripts/mix-zh.mjs
+scripts/narrate-tts.mjs
+scripts/record-demo.mjs
+scripts/render-deck.mjs
+scripts/render-hyperframes-polish.mjs
+scripts/render-poster.mjs
+scripts/take-screenshots.mjs
+scripts/tighten-demo.mjs

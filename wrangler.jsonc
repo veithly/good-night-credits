@@ -1,0 +1,29 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "good-night-credits",
+  "compatibility_date": "2026-05-21",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "good-night-credits"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "good-night-credits-db",
+      "database_id": "48a700ab-ee5a-4d95-9e6b-6b37f711ccf8"
+    }
+  ],
+  "vars": {
+    "MODEL_GATEWAY_MODEL": "step-3.6",
+    "NEXT_PUBLIC_DEMO_MODE": "1",
+    "NEXT_PUBLIC_APP_NAME": "Good Night Credits"
+  }
+}

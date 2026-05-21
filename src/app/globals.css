@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-ink-950 text-moon-50 antialiased;
+    background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(94, 234, 212, 0.10), transparent 60%),
+      radial-gradient(900px 500px at 10% 110%, rgba(167, 139, 250, 0.10), transparent 60%),
+      linear-gradient(180deg, #05060a 0%, #07091a 100%);
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  ::selection {
+    background: rgba(167, 139, 250, 0.35);
+    color: white;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-xl;
+  }
+
+  .glass-card {
+    @apply glass shadow-[0_6px_40px_-12px_rgba(94,234,212,0.18)] transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06];
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-aurora-teal via-aurora-violet to-aurora-rose bg-clip-text text-transparent;
+  }
+
+  .moon-grad {
+    background: linear-gradient(135deg, rgba(94, 234, 212, 0.18), rgba(167, 139, 250, 0.22) 60%, rgba(251, 113, 133, 0.18));
+  }
+
+  .stat-num {
+    @apply font-display text-3xl font-semibold tracking-tight text-white md:text-4xl;
+  }
+
+  .stat-label {
+    @apply text-xs uppercase tracking-[0.18em] text-moon-200/70;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-moon-100;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-aurora-teal/50;
+  }
+
+  .btn-primary {
+    @apply btn bg-gradient-to-r from-aurora-teal to-aurora-violet text-ink-950 shadow-lg shadow-aurora-violet/20 hover:from-aurora-teal/90 hover:to-aurora-violet/90;
+  }
+
+  .btn-ghost {
+    @apply btn border border-white/10 bg-white/5 text-moon-50 hover:bg-white/10;
+  }
+
+  .btn-secondary {
+    @apply btn border border-white/10 bg-white/[0.04] text-moon-50 hover:bg-white/[0.07];
+  }
+
+  .btn-danger {
+    @apply btn border border-aurora-rose/30 bg-aurora-rose/10 text-aurora-rose hover:bg-aurora-rose/20;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-white/10 bg-ink-900/60 px-3 py-2 text-sm text-moon-50 placeholder:text-moon-200/40 focus:border-aurora-teal/60 focus:outline-none focus:ring-2 focus:ring-aurora-teal/20;
+  }
+
+  .label {
+    @apply text-xs font-medium uppercase tracking-[0.14em] text-moon-200/80;
+  }
+
+  .divider {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent;
+  }
+
+  .ring-aurora {
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 18px 60px -30px rgba(167, 139, 250, 0.55);
+  }
+
+  .ledger-row {
+    @apply grid grid-cols-12 items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3 text-sm transition-colors hover:bg-white/[0.04];
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .scroll-fade-x {
+    mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+}
